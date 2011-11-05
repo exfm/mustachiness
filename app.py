@@ -5,11 +5,23 @@ from werkzeug.urls import url_fix
 import urllib
 import urllib2
 from collections import OrderedDict
+import redis
 
 app = Flask(__name__)
 
 exfm = ExfmClient()
 
+_redis = None
+
+
+def get_redis():
+    global _redis
+    if not _redis:
+        _redis = redis.Redis(
+            db=20
+        )
+
+    return _redis
 
 class UrlConverter(BaseConverter):
     regex = '[^/].*?'
@@ -28,31 +40,35 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/api/search/<q>')
-def api_search(q):
-    results = exfm.get_song_search_results(q)
-    return jsonify(results)
+def extract(q):
+    params = [
+        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('text', q)
+    ]
+    fp = urllib2.urlopen("http://developer.echonest.com/api/v4/artist/extract?%s" % urllib.urlencode(params))
+    data = fp.read()
+    fp.close()
+    r = json.loads(data)
+    artist = r['response']['artists'][0]['name'].lower()
+    title = q.lower().replace(artist.lower(), '')
+    return artist.strip(), title.strip()
 
 
 def search_en():
+    if request.values.get('q'):
+        artist, title = extract(request.values.get('q'))
+    else:
+        artist = request.values.get('artist')
+        title = request.values.get('title')
+
     params = [
         ('api_key', 'N6E4NIOVYMTHNDM8J'),
-        ('artist', request.values.get('artist')),
-        ('title', request.values.get('title')),
+        ('artist', artist),
+        ('title', title),
         ('bucket', 'audio_summary'),
         ('bucket', 'song_hotttnesss'),
     ]
     fp = urllib2.urlopen("http://developer.echonest.com/api/v4/song/search?%s" % urllib.urlencode(params))
-    data = fp.read()
-    fp.close()
-    return json.loads(data)
-
-
-def song_profile(*id):
-    params = [('api_key', 'N6E4NIOVYMTHNDM8J')]
-    [params.append(('id', _)) for _ in id]
-
-    fp = urllib2.urlopen("http://developer.echonest.com/api/v4/song/profile?%s" % urllib.urlencode(params))
     data = fp.read()
     fp.close()
     return json.loads(data)
