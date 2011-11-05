@@ -63,11 +63,6 @@ def get_song():
             r.set(key, json.dumps(song))
     else:
         song = json.loads(r.get(key))
-
-    i = r.lindex('latest_staches', song['id'])
-
-    if i != 0:
-        r.lpush('latest_staches', song['id'])
     return song
 
 
@@ -78,7 +73,11 @@ def index():
 
 @app.route('/make')
 def make():
-    return render_template("make.html", song=get_song())
+    song = get_song()
+    r = get_redis()
+    r.lpush('latest_staches', song['id'])
+
+    return render_template("make.html", song=song)
 
 
 @app.route('/latest')
