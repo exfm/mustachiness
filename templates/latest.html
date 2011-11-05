@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% from "_helpers.html" import stache %}
+{% block body %}
+    {% for song in songs %}
+        {{stache(song)}}
+    {% endfor %}
+{% endblock %}

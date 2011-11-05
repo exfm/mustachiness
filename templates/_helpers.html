@@ -1,0 +1,6 @@
+{% macro stache(song) %}
+    <div class="stache">
+        {{song['artist_name']}} - {{song['title']}}
+        <canvas rel="{{song['id']}}" width="150" height="150"></canvas>
+    </div>
+{% endmacro %}

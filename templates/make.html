@@ -1,6 +1,10 @@
 {% extends "base.html" %}
+{% from "_helpers.html" import stache %}
 {% block body %}
+{{stache(song)}}
+
 <form id="make" action="/make">
     <input type="text" placeholder="Artist Song Title" name="q" />
 </form>
+
 {% endblock %}

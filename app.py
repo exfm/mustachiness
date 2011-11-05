@@ -38,60 +38,17 @@ class UrlConverter(BaseConverter):
 app.url_map.converters['url'] = UrlConverter
 
 
-@app.route('/')
-def index():
-    return render_template("index.html")
-
-
-@app.route('/api/latest')
-def api_latest():
+def get_latest(start, results):
     r = get_redis()
     ids = r.lrange('latest_staches', request.values.get('start', 0), request.values.get('results', 20))
-    print ids
     pipe = r.pipeline()
     [pipe.get('cache:data:%s' % _) for _ in ids]
     res = pipe.execute()
-    print res
-    return jsonify({'staches': [json.loads(x) for x in res]})
+    songs = [json.loads(x) for x in res]
+    return songs
 
 
-def extract(q):
-    params = [
-        ('api_key', 'N6E4NIOVYMTHNDM8J'),
-        ('text', q)
-    ]
-    fp = urllib2.urlopen("http://developer.echonest.com/api/v4/artist/extract?%s" % urllib.urlencode(params))
-    data = fp.read()
-    fp.close()
-    resp = json.loads(data)
-    artist = resp['response']['artists'][0]['name'].lower()
-    title = q.lower().replace(artist.lower(), '')
-
-    return artist.strip(), title.strip()
-
-
-def search_en():
-    if request.values.get('q'):
-        artist, title = extract(request.values.get('q'))
-    else:
-        artist = request.values.get('artist')
-        title = request.values.get('title')
-
-    params = [
-        ('api_key', 'N6E4NIOVYMTHNDM8J'),
-        ('artist', artist),
-        ('title', title),
-        ('bucket', 'audio_summary'),
-        ('bucket', 'song_hotttnesss'),
-    ]
-    fp = urllib2.urlopen("http://developer.echonest.com/api/v4/song/search?%s" % urllib.urlencode(params))
-    data = fp.read()
-    fp.close()
-    return json.loads(data)
-
-
-@app.route('/api/data')
-def api_data():
+def get_song():
     song = search_en()['response']['songs'][0]
     r = get_redis()
     key = 'cache:data:%s' % (song['id'])
@@ -111,5 +68,71 @@ def api_data():
 
     if i != 0:
         r.lpush('latest_staches', song['id'])
+    return song
 
-    return jsonify({'song': song})
+
+@app.route('/')
+def index():
+    return render_template("index.html")
+
+
+@app.route('/make')
+def make():
+    return render_template("make.html", song=get_song())
+
+
+@app.route('/latest')
+def latest():
+    return render_template("latest.html", songs=get_latest(0, 5))
+
+
+@app.route('/api/latest')
+def api_latest():
+    songs = get_latest(request.values.get('start', 0), request.values.get('results', 20))
+    return jsonify({'staches': songs})
+
+
+def extract(q):
+    params = [
+        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('text', q)
+    ]
+    fp = urllib2.urlopen("http://developer.echonest.com/api/v4/artist/extract?%s" % urllib.urlencode(params))
+    data = fp.read()
+    fp.close()
+    resp = json.loads(data)
+    artist = resp['response']['artists'][0]['name'].lower()
+    title = q.lower().replace(artist.lower(), '')
+
+    return artist.strip(), title.strip()
+
+
+def search_en():
+    params = [
+        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('bucket', 'audio_summary'),
+        ('bucket', 'song_hotttnesss'),
+    ]
+    artist = None
+    title = None
+
+    if request.values.get('id'):
+        params.extend([('id', request.values.get('id'))])
+    elif request.values.get('q'):
+        artist, title = extract(request.values.get('q'))
+    else:
+        artist = request.values.get('artist')
+        title = request.values.get('title')
+
+    if artist and title:
+        params.extend([('artist', artist), ('title', title)])
+
+    fp = urllib2.urlopen("http://developer.echonest.com/api/v4/song/search?%s" % urllib.urlencode(params))
+    data = fp.read()
+    fp.close()
+    return json.loads(data)
+
+
+@app.route('/api/data')
+def api_data():
+    return jsonify({'song': get_song()})
