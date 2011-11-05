@@ -6,7 +6,8 @@ import urllib
 import urllib2
 from collections import OrderedDict
 import redis
-import hashlib
+
+CACHING = True
 
 app = Flask(__name__)
 
@@ -82,15 +83,16 @@ def api_data():
     song = search_en()['response']['songs'][0]
     r = get_redis()
     key = 'cache:data:%s' % (song['id'])
-    if not r.exists(key):
+    if not r.exists(key) and CACHING:
         analysis_url = song['audio_summary']['analysis_url']
         fp = urllib2.urlopen(analysis_url)
         data = json.loads(fp.read())
         fp.close()
         song['loudness'] = OrderedDict([(item['start'], item['loudness_max'])
              for item in data['segments']])
-        r.set(key, json.dumps(song))
-        r.expire(key, 300)
+        if CACHING:
+            r.set(key, json.dumps(song))
+            r.expire(key, 300)
     else:
         song = json.loads(r.get(key))
 
