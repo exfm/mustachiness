@@ -40,7 +40,7 @@ app.url_map.converters['url'] = UrlConverter
 
 def get_latest(start, results):
     r = get_redis()
-    ids = r.lrange('latest_staches', request.values.get('start', 0), request.values.get('results', 20))
+    ids = r.lrange('latest_staches', start, results)
     pipe = r.pipeline()
     [pipe.get('cache:data:%s' % _) for _ in ids]
     res = pipe.execute()
