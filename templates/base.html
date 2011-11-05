@@ -58,6 +58,9 @@
       }
 
     </style>
+    <script>
+      window.staches = {};
+    </script>
 
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="/static/images/favicon.ico">
@@ -111,10 +114,14 @@
     </div> <!-- /container -->
     <script src=" https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <script src=" /static/js/underscore-min.js"></script>
+    <script src=" /static/js/mustachery.js"></script>
 
     <script>
       $(function(){
-
+          $('.stache').each(function(){
+              var id = $(this).attr('id');
+              makeStache(window.staches[id], id);
+          });
       });
     </script>
 

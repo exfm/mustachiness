@@ -1,6 +1,10 @@
 {% macro stache(song) %}
-    <div class="stache">
-        {{song['artist_name']}} - {{song['title']}}
-        <canvas rel="{{song['id']}}" width="150" height="150"></canvas>
+    <div id="{{song['id']}}" class="stache">
+        <div>
+            {{song['artist_name']}} - {{song['title']}}
+        </div>
     </div>
+    <script>
+        window.staches["{{song['id']}}"] = {{song|tojson|safe}};
+    </script>
 {% endmacro %}

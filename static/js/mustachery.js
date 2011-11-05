@@ -1,38 +1,42 @@
 
-// var search_url = 'static/js/standard.json';
+var search_url = 'static/js/standard.json';
 //var search_url = 'http://mustachiness.ex.fm/api/data?title=%22Run%22&artist=%22Snow%20Patrol%22';
 
-
 $(function(){
-	// mustache defaults
-	var mWidth = 200;
-	var mHeight = 60;
-	var divot = 5;
-	var taperStart = .5 * mWidth;
-	var taperLength = mWidth - taperStart;
 
-	// canvas goodness
-	var canvas = document.getElementById('stachesong');
-	var ctx = canvas.getContext('2d');
 
-	$(canvas).attr('width', mWidth*2 + divot);
-	$(canvas).attr('height', mHeight*2);
-	function fetchHairs(q){
-		// get data
-		$.ajax({
-				url: 'http://mustachiness.ex.fm/api/data?q='+q,
-				success:function(data){
-					makeStache(data);
-				}
-			}
-		)
-	}
+	// get data
+	// $.ajax({
+	// 		url:search_url,
+	// 		success:function(data){
+	// 			makeStache(data, 'testdiv');
+	// 		}
+	// 	}
+	// )
 
 	// draw a songStache!
-	function makeStache(data){
-		var duration = data.song.audio_summary.duration;
+	function makeStache(data, el){
+		console.log(data, el)
+		// mustache defaults
+		var mWidth = 200;
+		var mHeight = 60;
+		var divot = 5;
+		var taperStart = 0.5 * mWidth;
+		var taperLength = mWidth - taperStart;
 
-		lData = data.song.loudness;
+		var curl;
+
+		// canvas goodness
+		var canvas = document.createElement('canvas');
+		var ctx = canvas.getContext('2d');
+
+		$(canvas).attr('width', mWidth*2 + divot);
+		$(canvas).attr('height', mHeight*2);
+
+
+		var duration = data.audio_summary.duration;
+
+		lData = data.loudness;
 		var size = _.size(lData);
 
 		var step = Math.floor(size/mWidth);
@@ -98,8 +102,10 @@ $(function(){
 		tlctx.drawImage(cacheStache, 0, 0);
 		ctx.drawImage(tl, 0, 0);
 
-
-
+		var div = '#'+el;
+		$(div).append(canvas);
+		console.log($(div));
 	}
-})
+	window.makeStache = makeStache;
+});
 
