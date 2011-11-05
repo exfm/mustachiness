@@ -43,6 +43,18 @@ def index():
     return render_template("index.html")
 
 
+@app.route('/api/latest')
+def api_latest():
+    r = get_redis()
+    ids = r.lrange('latest_staches', request.values.get('start', 0), request.values.get('results', 20))
+    print ids
+    pipe = r.pipeline()
+    [pipe.get('cache:data:%s' % _) for _ in ids]
+    res = pipe.execute()
+    print res
+    return jsonify({'staches': [json.loads(x) for x in res]})
+
+
 def extract(q):
     params = [
         ('api_key', 'N6E4NIOVYMTHNDM8J'),
@@ -92,8 +104,12 @@ def api_data():
              for item in data['segments']])
         if CACHING:
             r.set(key, json.dumps(song))
-            r.expire(key, 300)
     else:
         song = json.loads(r.get(key))
+
+    i = r.lindex('latest_staches', song['id'])
+
+    if i != 0:
+        r.lpush('latest_staches', song['id'])
 
     return jsonify({'song': song})
