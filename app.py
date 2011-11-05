@@ -61,6 +61,8 @@ def get_song():
              for item in data['segments']])
         if CACHING:
             r.set(key, json.dumps(song))
+        r.lpush('latest_staches', song['id'])
+
     else:
         song = json.loads(r.get(key))
     return song
@@ -74,9 +76,6 @@ def index():
 @app.route('/make')
 def make():
     song = get_song()
-    r = get_redis()
-    r.lpush('latest_staches', song['id'])
-
     return render_template("make.html", song=song)
 
 
