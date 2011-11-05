@@ -1,6 +1,14 @@
 {% extends "base.html" %}
+{% from "_helpers.html" import stache %}
+
 {% block body %}
 <form id="make" action="/make">
     <input type="text" placeholder="Artist Song Title" name="q" />
 </form>
+
+<h2>Recent Staches</h2>
+{% for song in songs %}
+    {{stache(song)}}
+{% endfor %}
+<a href="/latest">mas</a>
 {% endblock %}

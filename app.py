@@ -70,7 +70,7 @@ def get_song():
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("index.html", songs=get_latest(0, 5))
 
 
 @app.route('/make')
@@ -81,7 +81,7 @@ def make():
 
 @app.route('/latest')
 def latest():
-    return render_template("latest.html", songs=get_latest(0, 5))
+    return render_template("latest.html", songs=get_latest(0, 10))
 
 
 @app.route('/api/latest')
