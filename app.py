@@ -6,6 +6,7 @@ import urllib
 import urllib2
 from collections import OrderedDict
 import redis
+import hashlib
 
 app = Flask(__name__)
 
@@ -18,10 +19,11 @@ def get_redis():
     global _redis
     if not _redis:
         _redis = redis.Redis(
-            db=20
+            db=12
         )
 
     return _redis
+
 
 class UrlConverter(BaseConverter):
     regex = '[^/].*?'
@@ -48,9 +50,10 @@ def extract(q):
     fp = urllib2.urlopen("http://developer.echonest.com/api/v4/artist/extract?%s" % urllib.urlencode(params))
     data = fp.read()
     fp.close()
-    r = json.loads(data)
-    artist = r['response']['artists'][0]['name'].lower()
+    resp = json.loads(data)
+    artist = resp['response']['artists'][0]['name'].lower()
     title = q.lower().replace(artist.lower(), '')
+
     return artist.strip(), title.strip()
 
 
@@ -77,11 +80,18 @@ def search_en():
 @app.route('/api/data')
 def api_data():
     song = search_en()['response']['songs'][0]
-    analysis_url = song['audio_summary']['analysis_url']
-    fp = urllib2.urlopen(analysis_url)
-    data = json.loads(fp.read())
-    fp.close()
-    song['loudness'] = OrderedDict([(item['start'], item['loudness_max'])
-         for item in data['segments']])
+    r = get_redis()
+    key = 'cache:data:%s' % (song['id'])
+    if not r.exists(key):
+        analysis_url = song['audio_summary']['analysis_url']
+        fp = urllib2.urlopen(analysis_url)
+        data = json.loads(fp.read())
+        fp.close()
+        song['loudness'] = OrderedDict([(item['start'], item['loudness_max'])
+             for item in data['segments']])
+        r.set(key, json.dumps(song))
+        r.expire(key, 300)
+    else:
+        song = json.loads(r.get(key))
 
     return jsonify({'song': song})
