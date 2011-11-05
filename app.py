@@ -81,7 +81,16 @@ def make():
 
 @app.route('/latest')
 def latest():
-    return render_template("latest.html", songs=get_latest(0, 10))
+    r = get_redis()
+    total = r.llen('latest_staches')
+    start = request.values.get('start', 0)
+    results = request.values.get('results', 10)
+
+    has_more = total < (start + total)
+    has_less = start > 0
+
+    return render_template("latest.html",
+        songs=get_latest(start, results), has_more=has_more, has_less=has_less)
 
 
 @app.route('/api/latest')
