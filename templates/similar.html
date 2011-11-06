@@ -2,7 +2,7 @@
 {% from "_helpers.html" import stache %}
 {% block body %}
     {{stache(song)}}
-    <h2>Similar Songs</h2>
+    <h2>Similar <strike>Songs</strike>Staches</h2>
     {% for song in songs %}
         {{stache(song)}}
     {% endfor %}
