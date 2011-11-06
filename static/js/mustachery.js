@@ -88,7 +88,11 @@ $(function(){
 		var prevLoudness = 0;
 
 		for(var i = 0; i < mWidth; i++){
-			var l = Math.abs(timestamps[i][1]);
+			try{
+				var l = Math.abs(timestamps[i][1]);
+			} catch(e){
+				var l = Math.abs(timestamps[i]);
+			}
 			var h = l + fatness;
 
 			if(i > taperStart){
