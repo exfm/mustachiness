@@ -36,7 +36,7 @@ h1{
 	font-size: 21px;
 	display: inline-block;
 	line-height: 44px;
-	border-right: 1px solid black;
+	border-right: 1px solid rgba(78, 42, 24, 0.3);
 	padding: 4px 15px 0 0;
 }
 
