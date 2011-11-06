@@ -118,8 +118,14 @@ def about():
 
 
 @app.route('/song/<song_id>/buy/<what>')
-def about():
-    return render_template("about.html")
+def buy(song_id, what):
+    song = get_song(song_id)
+    if what == "shirt":
+        url = "http://www.zazzle.com/api/create/at-238283152284673545?ref=238283152284673545&amp;ax=linkover&amp;pd=235941910710981976&amp;fwd=productpage&amp;ed=true&amp;stache=%(s3_url)s&amp;song=%(artist_name)s%20-%20%(title)s" % song
+    else:
+        url = "http://www.zazzle.com/api/create/at-238283152284673545?ref=238283152284673545&amp;ax=linkover&amp;pd=168445848112028823&amp;fwd=productpage&amp;ed=true&amp;stache=%(s3_url)s&amp;title=%(title)s&amp;artist=%(artist_name)s"
+
+    return redirect(url)
 
 
 @app.route('/make')
