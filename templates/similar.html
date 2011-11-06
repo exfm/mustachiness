@@ -2,10 +2,12 @@
 {% from "_helpers.html" import stache %}
 {% block body %}
     {{stache(song)}}
-    <h2>Similar <strike>Songs</strike>Staches</h2>
+    <h2>Similar <strike>Songs</strike> Staches</h2>
+    <div class="similar">
     {% for _song in songs %}
         {% if _song['id'] != song['id'] %}
         {{stache(_song)}}
         {% endif %}
     {% endfor %}
+    </div>
 {% endblock %}
