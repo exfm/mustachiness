@@ -3,8 +3,10 @@
 {% block body %}
     {{stache(song)}}
     <h2>Similar <strike>Songs</strike>Staches</h2>
-    {% for song in songs %}
-        {{stache(song)}}
+    {% for _song in songs %}
+        {% if _song['id'] != song['id'] %}
+        {{stache(_song)}}
+        {% endif %}
     {% endfor %}
 {% endblock %}
 
