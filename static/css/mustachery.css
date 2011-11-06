@@ -14,7 +14,7 @@ h1{
 #make {
 	border-top: 1px dashed rgba(78, 42, 24, 0.3);
 	border-bottom: 1px dashed rgba(78, 42, 24, 0.3);
-	padding: 10px;
+	padding: 0 10px;
 }
 #make input {
 	font-family: Courier;
@@ -129,4 +129,29 @@ width: 110px;
 }
 .artist_image img{
 	display:block;
+}
+
+.stache .buy {
+	position: absolute;
+	background: white;
+	padding: 5px;
+	border-radius: 3px;
+	right: 10px;
+	top: 60px;
+	opacity: 0;
+	-moz-opacity: 0;
+	filter:alpha(opacity=0);
+	-webkit-transition:opacity .2s linear;		
+	   -moz-transition:opacity .2s linear;
+	     -o-transition:opacity .2s linear;
+	        transition:opacity .2s linear; 
+}
+.stache:hover .buy{
+	opacity: 1;
+	-moz-opacity: 1;
+	filter:alpha(opacity=100);
+}
+
+.stache .buy a{
+font-size: 12px;
 }
