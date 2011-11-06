@@ -155,7 +155,9 @@
       $(function(){
           $('.stache').each(function(){
               var id = $(this).attr('id');
-              makeStache(window.staches[id], id);
+              if(window.staches[id]){
+                  makeStache(window.staches[id], id);
+              }
           });
       });
     </script>

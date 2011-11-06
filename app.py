@@ -347,19 +347,26 @@ def upload_stache():
     import tempfile
     import boto
     from boto.s3.key import Key
+    import re
+
+    dataUrlPattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
 
     conn = boto.connect_s3(app.config['AWS_KEY'], app.config['AWS_SECRET'])
 
     song_id = request.values.get('song_id')
-    data = base64.b64decode(request.values.get('stache'))
+    imgb64 = dataUrlPattern.match(request.values.get('stache')).group(2)
+    data = base64.b64decode(imgb64)
 
     fp = tempfile.NamedTemporaryFile()
+    # fp = open(song_id, 'w')
     fp.write(data)
 
-    bucket = conn.create_bucket('staches')
+    bucket = conn.get_bucket('staches')
+    headers = {'Content-Type': 'image/png'}
+
     k = Key(bucket)
-    k.key = "%s.jpg" % (song_id)
-    k.set_contents_from_file(fp)
+    k.key = "%s.png" % (song_id)
+    k.set_contents_from_file(fp, headers=headers)
     k.set_acl('public-read')
     fp.close()
 

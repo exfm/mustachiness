@@ -3,8 +3,12 @@
         <div>
             <a href="/artist/{{song['artist_name']}}">{{song['artist_name']}}</a> - <a href="/song/{{song['id']}}">{{song['title']}}</a>
         </div>
+        {% if song.get('s3_url') %}
+            <img src="{{song.get('s3_url')}}" />
+        {% else %}
+        <script>
+            window.staches["{{song['id']}}"] = {{song|tojson|safe}};
+        </script>
+        {% endif %}
     </div>
-    <script>
-        window.staches["{{song['id']}}"] = {{song|tojson|safe}};
-    </script>
 {% endmacro %}

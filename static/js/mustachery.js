@@ -148,6 +148,15 @@ $(function(){
 
 		var div = '#'+el;
 		$(div).append(canvas);
+
+		var imgData = canvas.toDataURL("image/png");
+		$.post(
+			'/upload-stache',
+			{'stache': imgData, 'song_id': data.id},
+			function(resp){
+				console.log(resp);
+			}
+		);
 	}
 
 	window.makeStache = makeStache;
