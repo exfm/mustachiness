@@ -323,4 +323,9 @@ def upload_stache():
     k.set_acl('public-read')
     fp.close()
 
-    return "http://staches.s3.amazonaws.com/%s" % k.key
+    r = get_redis()
+    key = 'cache:data:%s' % (song_id)
+    song = json.loads(r.get(key))
+    song['s3_url'] = "http://staches.s3.amazonaws.com/%s" % k.key
+    r.set(key, json.dumps(song))
+    return song['s3_url']
