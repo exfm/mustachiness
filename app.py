@@ -135,6 +135,57 @@ def get_song_years(year_start, year_end):
         year_start=year_start, year_end=year_end)
 
 
+@app.route('/genre/<genre>')
+def get_genre(genre):
+    songs = get_songs_in_genre(genre)
+    return render_template("genre.html", songs=songs,
+        genre=genre)
+
+
+def get_songs_in_genre(genre):
+    params = [
+        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('bucket', 'audio_summary'),
+        ('bucket', 'song_hotttnesss'),
+        ('style', genre),
+        ('sort', 'song_hotttnesss-desc')
+    ]
+
+    method = "search"
+
+    _ = "http://developer.echonest.com/api/v4/song/%s?%s" % (method, urllib.urlencode(params))
+    print _
+    fp = urllib2.urlopen(_)
+    data = fp.read()
+    fp.close()
+    data = json.loads(data)
+    r = get_redis()
+    songs = []
+    for song in data['response']['songs']:
+        key = 'cache:data:%s' % (song['id'])
+        if not r.exists(key):
+            analysis_url = song['audio_summary']['analysis_url']
+            try:
+                fp = urllib2.urlopen(analysis_url)
+                data = json.loads(fp.read())
+                fp.close()
+            except AttributeError, e:
+                print e, analysis_url
+                return {}
+
+            song['loudness'] = OrderedDict([(item['start'], item['loudness_max'])
+                 for item in data['segments']])
+            if CACHING:
+                r.set(key, json.dumps(song))
+            r.lpush('latest_staches', song['id'])
+
+        else:
+            song = json.loads(r.get(key))
+        songs.append(song)
+
+    return songs
+
+
 def get_song_ids_for_years(year_start, year_end):
     r = get_redis()
     key = "cache:years:%s:%s" % (year_start, year_end)

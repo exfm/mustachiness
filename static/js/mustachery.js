@@ -1,29 +1,28 @@
 
 var search_url = 'static/js/standard.json';
-//var search_url = 'http://mustachiness.ex.fm/api/data?title=%22Run%22&artist=%22Snow%20Patrol%22';
+var search_url = 'http://mustachiness.ex.fm/api/data?title=%22Run%22&artist=%22Snow%20Patrol%22';
 
 $(function(){
 
 
 	// get data
-	// $.ajax({
-	// 		url:search_url,
-	// 		success:function(data){
-	// 			makeStache(data, 'testdiv');
-	// 		}
-	// 	}
-	// )
+	$.ajax({
+			url:search_url,
+			success:function(data){
+				makeStache(data, 'testdiv');
+			}
+		}
+	)
 
 	// draw a songStache!
 	function makeStache(data, el){
-		console.log(data, el)
+
 		// mustache defaults
 		var mWidth = 200;
 		var mHeight = 60;
 		var divot = 5;
-		var taperStart = 0.5 * mWidth;
+		var taperStart = .5 * mWidth;
 		var taperLength = mWidth - taperStart;
-
 		var curl;
 
 		// canvas goodness
@@ -33,7 +32,9 @@ $(function(){
 		$(canvas).attr('width', mWidth*2 + divot);
 		$(canvas).attr('height', mHeight*2);
 
-
+		if(data.song){
+			data = data.song;
+		}
 		var duration = data.audio_summary.duration;
 
 		lData = data.loudness;
@@ -51,61 +52,61 @@ $(function(){
 		// cached element
 		var cacheStache = document.createElement('canvas');
 	    cacheStache.width = mWidth;
-	    cacheStache.height = mHeight;
-
+	    cacheStache.height = mHeight*2;
 	    cachectx = cacheStache.getContext('2d');
+
+
 
 		for(var i = 0; i < mWidth; i++){
 			var h = Math.abs(timestamps[i][1]);
 
 			if(i > taperStart){
 				var percentLeft = (taperLength - (i - taperStart))/taperLength;
-				console.log(percentLeft, i);
 				h = h * percentLeft;
 			}
 
-			cachectx.fillRect(i,0,1,h);
+			var vStrip = document.createElement('canvas');
+			vStrip.width = 2;
+			var vh = Math.floor(h);
+
+	    	vStrip.height = Math.floor(h*2) || 1;
+	    	var v_ctx = vStrip.getContext('2d');
+
+
+			//cachectx.save();
+			cachectx.rotate(-i*.0005 * (Math.PI/180));
+			//cachectx.rotate(i*.01)
+			v_ctx.fillRect(0,0,2,h*2);
+
+
+			//cachectx.fillRect(i,mHeight-h,1,h*2);
+			cachectx.drawImage(vStrip, i, mHeight-h);
+			//cachectx.restore();
 		}
 
+		// RIGHT
+		var stacheRight = document.createElement('canvas');
+		stacheRight.width = mWidth;
+		stacheRight.height = mHeight*2;
+		sr_ctx = stacheRight.getContext('2d');
 
-		// bottom right
-		ctx.drawImage(cacheStache, mWidth + divot, mHeight);
+		sr_ctx.drawImage(cacheStache, divot, 0);
 
+		ctx.drawImage(stacheRight, mWidth, 0);
 
-		// top right
-		var tr = document.createElement('canvas');
-	    tr.width = mWidth;
-	    tr.height = mHeight;
-		trctx = tr.getContext('2d');
-		trctx.scale(1,-1);
-		trctx.translate(0,-mHeight);
-		trctx.drawImage(cacheStache, 0, 0);
-		ctx.drawImage(tr, mWidth + divot, 0);
-
-		// bottom left
-		var bl = document.createElement('canvas');
-	    bl.width = mWidth;
-	    bl.height = mHeight;
-		blctx = bl.getContext('2d');
-		blctx.scale(-1,1);
-		blctx.translate(-mWidth,0);
-		blctx.drawImage(cacheStache, 0, 0);
-		ctx.drawImage(bl, 0, mHeight);
-
-		// top left
-		var tl = document.createElement('canvas');
-	    tl.width = mWidth;
-	    tl.height = mHeight;
-		tlctx = tl.getContext('2d');
-		tlctx.scale(-1,-1);
-		tlctx.translate(-mWidth,-mHeight);
-		tlctx.drawImage(cacheStache, 0, 0);
-		ctx.drawImage(tl, 0, 0);
+		// LEFT
+		var stacheLeft = document.createElement('canvas');
+		stacheLeft.width = mWidth;
+		stacheLeft.height = mHeight*2;
+		sl_ctx = stacheLeft.getContext('2d');
+		sl_ctx.scale(-1,1);
+		sl_ctx.translate(-mWidth, 0);
+		sl_ctx.drawImage(stacheRight, 0, 0);
+		ctx.drawImage(stacheLeft, 0, 0);
 
 		var div = '#'+el;
 		$(div).append(canvas);
-		console.log($(div));
 	}
 	window.makeStache = makeStache;
-});
+})
 
