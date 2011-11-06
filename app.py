@@ -117,6 +117,11 @@ def about():
     return render_template("about.html")
 
 
+@app.route('/song/<song_id>/buy/<what>')
+def about():
+    return render_template("about.html")
+
+
 @app.route('/make')
 def make():
     song = get_song()
