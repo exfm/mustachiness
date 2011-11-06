@@ -153,9 +153,9 @@ width: 110px;
 }
 
 .stache .buy a{
-font-size: 12px;
+	font-size: 12px;
 }
-.twitter-share-button{
+.tweet-button{
 	position: absolute;
 	top: 14px;
 	right: 10px;
