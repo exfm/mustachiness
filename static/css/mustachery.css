@@ -1,0 +1,53 @@
+body{
+	background:url(../images/bg.jpg);
+}
+
+h1{
+	width:933px;
+	height:52px;
+	background:url(../images/logo.png) no-repeat 0 0;
+	overflow:hidden;
+	text-indent:-5000px;
+}
+
+.page-header, .content, .content .sidebar{
+	background:transparent;
+	
+	-webkit-box-shadow:none;
+	-moz-box-shadow:none;
+	box-shadow:none;
+	border:none;
+}
+
+.stache {
+	border-radius: 3px;
+	margin-bottom: 20px;
+	background: rgba(253, 252, 241, 0.7);
+	padding:5px;
+}
+
+.stache div:first-of-type{
+	font-size:15px;
+	background: rgba(78, 42, 24, .9);
+	padding: 10px;
+	text-align: center;
+	border-radius: 2px;
+}
+
+.stache a{
+	font-size:18px;
+	color:#F5903D;
+	text-decoration:none;
+
+}
+
+.content .sidebar {
+padding-left: 10px;
+width: 110px;
+}
+
+.sidebar h4 {
+	line-height: 20px;
+	margin-bottom: 5px;
+	font-size: 15px;
+}

@@ -58,6 +58,7 @@
       }
 
     </style>
+    <link href="{{ url_for('static', filename='css/mustachery.css') }}" media="screen, projection" rel="stylesheet" type="text/css" />
     <script>
       window.staches = {};
     </script>
@@ -100,11 +101,11 @@
           <h1>Mustachiness</h1>
         </div>
         <div class="row">
-          <div class="span10">
+          <div class="span14">
             {% block body %}
             {% endblock %}
           </div>
-          <div class="span4 sidebar">
+          <div class="span2 sidebar">
             {% block sidebar %}
                 <h4>Mustaches through the ages</h4>
                 <ul class="unstyled">
