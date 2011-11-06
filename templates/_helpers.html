@@ -1,7 +1,7 @@
 {% macro stache(song) %}
     <div id="{{song['id']}}" class="stache">
         <div>
-            <a href="/song/{{song['id']}}">{{song['artist_name']}} - {{song['title']}}</a>
+            <a href="/artist/{{song['artist_name']}}">{{song['artist_name']}}</a> - <a href="/song/{{song['id']}}">{{song['title']}}</a>
         </div>
     </div>
     <script>

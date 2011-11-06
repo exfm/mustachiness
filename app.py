@@ -135,6 +135,30 @@ def get_song_years(year_start, year_end):
         year_start=year_start, year_end=year_end)
 
 
+@app.route('/artist/<name>')
+def get_artist(name):
+    song_ids = get_artist_song_ids(name)
+    songs = [get_song(_) for _ in song_ids]
+    return render_template("artist.html", songs=songs,
+        name=name)
+
+
+def get_artist_song_ids(name):
+    params = [
+        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('name', name)
+    ]
+
+    _ = "http://developer.echonest.com/api/v4/artist/songs?%s" % (urllib.urlencode(params))
+    print _
+    fp = urllib2.urlopen(_)
+    data = fp.read()
+    fp.close()
+    data = json.loads(data)
+    song_ids = [song['id'] for song in data['response']['songs']]
+    return song_ids
+
+
 @app.route('/genre/<genre>')
 def get_genre(genre):
     songs = get_songs_in_genre(genre)

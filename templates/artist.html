@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% from "_helpers.html" import stache %}
+
+{% block body %}
+    <h2>{{name}} mustaches</h2>
+    {% for song in songs %}
+        {{stache(song)}}
+    {% endfor %}
+{% endblock %}
