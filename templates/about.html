@@ -7,15 +7,16 @@
     </p>
     <h2>How the Mustache-otron Works</h2>
     <p>
-        For each song, the peak loudness per segment is pulled from the echo nest audio analysis.
+        For each song, the peak loudness per segment is pulled from the echo nest audio analysis to create the wave form.  The following factors determine the mustaches final look in a very scientifical fashion:
     </p>
-    <ul class="unstyled">
+    <ol>
         <li><strong>Curviness</strong> - Curves occur when high loudness deltas are detected</li>
         <li><strong>Thickness</strong> - Mean loudness</li>
         <li><strong>Divot</strong> - (aka gap in the middle) hotness of the song</li>
         <li><strong>Direction</strong> - Up = higher energy; Down = lower energy</li>
         <li><strong>Curl</strong> - Dancability * energy</li>
-    </ul>
+        <li><strong>Color</strong> - Energy of the song.  Lower energy is darker</li>
+    </ol>
     <h2>Credits</h2>
     exfm stache | echonest stache | lastfm stache | musichackday stache
 {% endblock %}
