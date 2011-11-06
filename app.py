@@ -10,6 +10,8 @@ import redis
 CACHING = True
 
 app = Flask(__name__)
+app.config.from_pyfile('settings_local.py')
+
 
 exfm = ExfmClient()
 
@@ -297,3 +299,28 @@ def search_en(id=None):
 @app.route('/api/data')
 def api_data():
     return jsonify({'song': get_song()})
+
+
+@app.route('/upload-stache', methods=['POST'])
+def upload_stache():
+    import base64
+    import tempfile
+    import boto
+    from boto.s3.key import Key
+
+    conn = boto.connect_s3(app.config['AWS_KEY'], app.config['AWS_SECRET'])
+
+    song_id = request.values.get('song_id')
+    data = base64.b64decode(request.values.get('stache'))
+
+    fp = tempfile.NamedTemporaryFile()
+    fp.write(data)
+
+    bucket = conn.create_bucket('staches')
+    k = Key(bucket)
+    k.key = "%s.jpg" % (song_id)
+    k.set_contents_from_file(fp)
+    k.set_acl('public-read')
+    fp.close()
+
+    return "http://staches.s3.amazonaws.com/%s" % k.key
