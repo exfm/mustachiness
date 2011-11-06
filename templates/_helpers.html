@@ -1,7 +1,7 @@
 {% macro stache(song) %}
     <div id="{{song['id']}}" class="stache">
         <div>
-            <a href="/artist/{{song['artist_name']}}">{{song['artist_name']}}</a> - <a href="/song/{{song['id']}}">{{song['title']}}</a>
+            <a class="artist_name" href="/artist/{{song['artist_name']}}">{{song['artist_name']}}</a>
         </div>
         {% if song.get('s3_url') %}
             <img src="{{song.get('s3_url')}}" />
@@ -10,5 +10,6 @@
             window.staches["{{song['id']}}"] = {{song|tojson|safe}};
         </script>
         {% endif %}
+        <a class="song_title" href="/song/{{song['id']}}">{{song['title']}}</a>
     </div>
 {% endmacro %}
