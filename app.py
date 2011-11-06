@@ -100,6 +100,13 @@ def get_song(id=None):
     return song
 
 
+@app.context_processor
+def _context_processor():
+    r = get_redis()
+    num_staches = r.llen('latest_staches')
+    return {'num_staches': num_staches}
+
+
 @app.route('/')
 def index():
     return render_template("index.html", songs=get_latest(0, 5))
