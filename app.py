@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, json
+from flask import Flask, render_template, jsonify, request, json, redirect
 from exfm import ExfmClient
 from werkzeug.routing import BaseConverter
 from werkzeug.urls import url_fix
@@ -72,7 +72,11 @@ def get_similar_song_ids(song_id):
 
 
 def get_song(id=None):
-    song = search_en(id=id)['response']['songs'][0]
+    song = search_en(id=id)
+    if not isinstance(song, dict):
+        return song
+
+    song = song['response']['songs'][0]
     r = get_redis()
     key = 'cache:data:%s' % (song['id'])
     if not r.exists(key):
@@ -104,6 +108,9 @@ def index():
 @app.route('/make')
 def make():
     song = get_song()
+    if not isinstance(song, dict):
+        return song
+
     return render_template("make.html", song=song)
 
 
@@ -281,7 +288,12 @@ def extract(q):
     artist = resp['response']['artists'][0]['name'].lower()
     title = q.lower().replace(artist.lower(), '')
 
-    return artist.strip(), title.strip()
+    artist = artist.strip()
+    title = title.strip()
+    if not title:
+        return redirect('/artist/%s' % artist)
+
+    return artist, title
 
 
 def search_en(id=None):
@@ -298,7 +310,12 @@ def search_en(id=None):
         params.extend([('id', _)])
 
     elif request.values.get('q'):
-        artist, title = extract(request.values.get('q'))
+
+        res = extract(request.values.get('q'))
+        if not isinstance(res, tuple):
+            return res
+
+        artist, title = res
     else:
         artist = request.values.get('artist')
         title = request.values.get('title')
@@ -312,7 +329,7 @@ def search_en(id=None):
         method = "search"
 
     _ = "http://developer.echonest.com/api/v4/song/%s?%s" % (method, urllib.urlencode(params))
-    print _
+
     fp = urllib2.urlopen(_)
     data = fp.read()
     fp.close()
