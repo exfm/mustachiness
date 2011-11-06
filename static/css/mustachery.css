@@ -21,10 +21,6 @@ font-family: Courier;
 padding: 10px;
 }
 
-.container {
-	width: 940px;
-}
-
 .page-header, .content, .content .sidebar{
 	background:transparent;
 	
@@ -71,4 +67,24 @@ width: 110px;
 	line-height: 20px;
 	margin-bottom: 5px;
 	font-size: 15px;
+}
+
+
+.row{
+	position:relative;
+}
+
+.artist_image {
+	position: absolute;
+	right: 0;
+	top: 0;
+	background: white;
+	padding: 5px;
+	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,.1);	
+	-moz-box-shadow: 0 2px 5px rgba(0,0,0,.1);
+	box-shadow: 0 2px 5px rgba(0,0,0,.1);
+
+}
+.artist_image img{
+	display:block;
 }
