@@ -367,5 +367,6 @@ def upload_stache():
     key = 'cache:data:%s' % (song_id)
     song = json.loads(r.get(key))
     song['s3_url'] = "http://staches.s3.amazonaws.com/%s" % k.key
+    song['stache_version'] = '0.1'
     r.set(key, json.dumps(song))
     return song['s3_url']
