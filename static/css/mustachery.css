@@ -1,5 +1,6 @@
 body{
 	background:url(../images/bg.jpg);
+	font-family:Courier;
 }
 
 h1{
@@ -8,6 +9,16 @@ h1{
 	background:url(../images/logo.png) no-repeat 0 0;
 	overflow:hidden;
 	text-indent:-5000px;
+}
+#make {
+border-top: 1px dashed rgba(78, 42, 24, 0.3);
+border-bottom: 1px dashed rgba(78, 42, 24, 0.3);
+padding: 10px;
+}
+#make input {
+font-size: 20px;
+font-family: Courier;
+padding: 10px;
 }
 
 .page-header, .content, .content .sidebar{
@@ -38,7 +49,10 @@ h1{
 	font-size:18px;
 	color:#F5903D;
 	text-decoration:none;
+}
 
+.stache a:hover{
+	text-decoration:underline;
 }
 
 .content .sidebar {
@@ -46,6 +60,9 @@ padding-left: 10px;
 width: 110px;
 }
 
+.content .sidebar a{
+	color:#C0600C;
+}
 .sidebar h4 {
 	line-height: 20px;
 	margin-bottom: 5px;
