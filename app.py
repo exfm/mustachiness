@@ -48,11 +48,32 @@ def get_latest(start, results):
     return songs
 
 
-def get_song():
-    song = search_en()['response']['songs'][0]
+def get_similar_song_ids(song_id):
+    r = get_redis()
+
+    key = 'cache:similar:%s' % (song_id)
+    if not r.exists(key):
+        params = [
+            ('api_key', 'N6E4NIOVYMTHNDM8J'),
+            ('song_id', song_id)
+        ]
+        _ = "http://developer.echonest.com/api/v4/playlist/basic?%s" % urllib.urlencode(params)
+        fp = urllib2.urlopen(_)
+        data = fp.read()
+        fp.close()
+        resp = json.loads(data)
+        song_ids = [i['id'] for i in resp['response']['songs']]
+        r.set(key, json.dumps(song_ids))
+    else:
+        song_ids = json.loads(r.get(key))
+    return song_ids
+
+
+def get_song(id=None):
+    song = search_en(id=id)['response']['songs'][0]
     r = get_redis()
     key = 'cache:data:%s' % (song['id'])
-    if not r.exists(key) and CACHING:
+    if not r.exists(key):
         analysis_url = song['audio_summary']['analysis_url']
         fp = urllib2.urlopen(analysis_url)
         data = json.loads(fp.read())
@@ -93,6 +114,14 @@ def latest():
         songs=get_latest(start, results), has_more=has_more, has_less=has_less)
 
 
+@app.route('/song/<song_id>')
+def song_page(song_id):
+    song = get_song(song_id)
+    songs = [get_song(_) for _ in get_similar_song_ids(song_id)]
+    return render_template("similar.html", song=song,
+        songs=songs)
+
+
 @app.route('/api/latest')
 def api_latest():
     songs = get_latest(request.values.get('start', 0), request.values.get('results', 20))
@@ -114,7 +143,7 @@ def extract(q):
     return artist.strip(), title.strip()
 
 
-def search_en():
+def search_en(id=None):
     params = [
         ('api_key', 'N6E4NIOVYMTHNDM8J'),
         ('bucket', 'audio_summary'),
@@ -123,8 +152,8 @@ def search_en():
     artist = None
     title = None
 
-    if request.values.get('id'):
-        params.extend([('id', request.values.get('id'))])
+    if id or request.values.get('id'):
+        params.extend([('id', request.values.get('id', id))])
     elif request.values.get('q'):
         artist, title = extract(request.values.get('q'))
     else:
@@ -134,7 +163,14 @@ def search_en():
     if artist and title:
         params.extend([('artist', artist), ('title', title)])
 
-    fp = urllib2.urlopen("http://developer.echonest.com/api/v4/song/search?%s" % urllib.urlencode(params))
+    if id or request.values.get('id'):
+        method = "profile"
+    else:
+        method = "search"
+
+    _ = "http://developer.echonest.com/api/v4/song/%s?%s" % (method, urllib.urlencode(params))
+
+    fp = urllib2.urlopen(_)
     data = fp.read()
     fp.close()
     return json.loads(data)
