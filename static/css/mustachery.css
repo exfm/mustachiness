@@ -21,6 +21,10 @@ font-family: Courier;
 padding: 10px;
 }
 
+.container {
+	width: 940px;
+}
+
 .page-header, .content, .content .sidebar{
 	background:transparent;
 	
