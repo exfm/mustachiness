@@ -121,10 +121,19 @@ def about():
 def buy(song_id, what):
     song = get_song(song_id)
     if what == "shirt":
-        url = "http://www.zazzle.com/api/create/at-238283152284673545?ref=238283152284673545&amp;ax=linkover&amp;pd=235941910710981976&amp;fwd=productpage&amp;ed=true&amp;stache=%(s3_url)s&amp;song=%(artist_name)s%20-%20%(title)s" % song
+        params = {
+            'stache': song['s3_url'],
+            'song': "%s %s" % (song['artist_name'], song['title'])
+        }
+        url = "http://www.zazzle.com/api/create/at-238283152284673545?ref=238283152284673545&ax=linkover&pd=235941910710981976&fwd=productpage&ed=true&%s" % (urllib.urlencode(params))
     else:
-        url = "http://www.zazzle.com/api/create/at-238283152284673545?ref=238283152284673545&amp;ax=linkover&amp;pd=168445848112028823&amp;fwd=productpage&amp;ed=true&amp;stache=%(s3_url)s&amp;title=%(title)s&amp;artist=%(artist_name)s"
-
+        params = {
+            'title': song['title'],
+            'artist': song['artist_name'],
+            'stache': song['s3_url']
+        }
+        url = "http://www.zazzle.com/api/create/at-238283152284673545?ref=238283152284673545&ax=linkover&pd=168445848112028823&fwd=productpage&ed=true&%s" % (urllib.urlencode(params))
+    print url
     return redirect(url)
 
 
