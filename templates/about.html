@@ -2,7 +2,20 @@
 {% from "_helpers.html" import stache %}
 {% block body %}
     <h2>About</h2>
-    <p>Some things</p>
+    <p>
+        This is project for <a href="http://wiki.musichackday.org/index.php?title=Mustachiness">Music Hackday Boston 2011</a>.
+    </p>
+    <h2>How the Mustache-otron Works</h2>
+    <p>
+        For each song, the peak loudness per segment is pulled from the echo nest audio analysis.
+    </p>
+    <ul class="unstyled">
+        <li><strong>Curviness</strong> - Curves occur when high loudness deltas are detected</li>
+        <li><strong>Thickness</strong> - Mean loudness</li>
+        <li><strong>Divot</strong> - (aka gap in the middle) hotness of the song</li>
+        <li><strong>Direction</strong> - Up = higher energy; Down = lower energy</li>
+        <li><strong>Curl</strong> - Dancability * energy</li>
+    </ul>
     <h2>Credits</h2>
     exfm stache | echonest stache | lastfm stache | musichackday stache
 {% endblock %}
