@@ -105,6 +105,11 @@ def index():
     return render_template("index.html", songs=get_latest(0, 5))
 
 
+@app.route('/about')
+def about():
+    return render_template("about.html")
+
+
 @app.route('/make')
 def make():
     song = get_song()
@@ -338,6 +343,10 @@ def search_en(id=None):
 
 @app.route('/api/data')
 def api_data():
+    return jsonify({'song': get_song()})
+
+@app.route('/api/artist/<name>/image')
+def api_artist_image():
     return jsonify({'song': get_song()})
 
 
