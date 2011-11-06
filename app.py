@@ -137,12 +137,35 @@ def get_song_years(year_start, year_end):
         year_start=year_start, year_end=year_end)
 
 
+def get_lastfm_image(name):
+    params = [
+        ('api_key', 'b25b959554ed76058ac220b7b2e0a026'),
+        ('method', 'artist.getimages'),
+        ('artist', name),
+        ('limit', 1),
+        ('format', 'json')
+
+    ]
+    url = "http://ws.audioscrobbler.com/2.0/?%s" % urllib.urlencode(params)
+    fp = urllib2.urlopen(url)
+    data = fp.read()
+    fp.close()
+    data = json.loads(data)
+    try:
+        return data['images']['image']['sizes']['size'][-1]['#text']
+    except:
+        return None
+
+
 @app.route('/artist/<name>')
 def get_artist(name):
     song_ids = get_artist_song_ids(name)
     songs = [get_song(_) for _ in song_ids]
+
+    artist_image = get_lastfm_image(name)
+
     return render_template("artist.html", songs=songs,
-        name=name)
+        name=name, artist_image=artist_image)
 
 
 def get_artist_song_ids(name):
