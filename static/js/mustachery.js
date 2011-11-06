@@ -81,9 +81,9 @@ $(function(){
 			x2 = 0,
 			y2 = 0;
 
-		var r = Math.floor(107 * data.song.audio_summary.energy),
-			g = Math.floor(60 * data.song.audio_summary.energy),
-			b = Math.floor(31 * data.song.audio_summary.energy);
+		var r = Math.floor(107 * data.audio_summary.energy),
+			g = Math.floor(60 * data.audio_summary.energy),
+			b = Math.floor(31 * data.audio_summary.energy);
 
 		var prevLoudness = 0;
 
