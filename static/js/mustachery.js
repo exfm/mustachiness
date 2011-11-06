@@ -10,11 +10,11 @@ $(function(){
 	function getStacheData(artist, title, el){
 		var search_url = 'http://mustachiness.ex.fm/api/data?title='+title+'&artist='+artist;
 		$.ajax({
-			url:search_url, 
+			url:search_url,
 			success:function(data){
 				makeStache(data, el);
 			}
-		})		
+		})
 	}
 
 	// draw a songStache!
@@ -22,21 +22,25 @@ $(function(){
 		var maxWidth = 900;
 		var minWidth = 250;
 
+		if (data.song){
+			data = data.song;
+		}
+
 
 		// mustache defaults
-		
+
 		var mHeight = 150;
 		var padding = 20;
 		var mWidth = maxWidth/2 - padding/2;
-		
-		var divot = data.song.song_hotttnesss * 5;
+
+		var divot = data.song_hotttnesss * 5;
 
 		var taperStart = .5 * mWidth;
 		var taperLength = mWidth - taperStart;
-		var direction = data.song.audio_summary.energy >= .5 ? 1 : -1;
+		var direction = data.audio_summary.energy >= .5 ? 1 : -1;
 
-		var curl = data.song.audio_summary.danceability * .001 * direction;
-		var fatness = Math.abs(data.song.audio_summary.loudness);
+		var curl = data.audio_summary.danceability * .001 * direction;
+		var fatness = Math.abs(data.audio_summary.loudness);
 
 		//console.log(curl, fatness)
 
@@ -44,13 +48,13 @@ $(function(){
 		var canvas = document.createElement('canvas');
 		var ctx = canvas.getContext('2d');
 
-		var duration = data.song.audio_summary.duration;
+		var duration = data.audio_summary.duration;
 
 		$(canvas).attr('width', maxWidth);
 		$(canvas).attr('height', mHeight*2 + padding*2);
-		
-		
-		lData = data.song.loudness;
+
+
+		lData = data.loudness;
 		var size = _.size(lData);
 
 		var step = Math.floor(size/((maxWidth-padding)/2));
@@ -70,8 +74,8 @@ $(function(){
 	    cacheStache.width = mWidth + padding;
 	    cacheStache.height = mHeight*2 + padding;
 	    cachectx = cacheStache.getContext('2d');
-	   	
-		
+
+
 		var x1 = 0,
 			y1 = 0,
 			x2 = 0,
@@ -95,12 +99,12 @@ $(function(){
 			var vStrip = document.createElement('canvas');
 			vStrip.width = 2;
 			var vh = Math.floor(h);
-			
+
 	    	vStrip.height = Math.floor(h*2) || 1;
 	    	var v_ctx = vStrip.getContext('2d');
 
 			v_ctx.fillStyle = 'rgb('+r+','+g+','+b+')';
-			
+
 			var lDelta = fatness - l;
 			var curlTarget = lDelta * .0001;
 
@@ -111,11 +115,11 @@ $(function(){
 
 			cachectx.rotate(i*curl * (Math.PI/180));
 			v_ctx.fillRect(0,0,2,h*2);
-			
-			
+
+
 			//cachectx.fillRect(i,mHeight-h,1,h*2);
 			cachectx.drawImage(vStrip, i, mHeight-h);
-			
+
 		}
 
 		// RIGHT
@@ -136,7 +140,7 @@ $(function(){
 		sl_ctx.scale(-1,1);
 		sl_ctx.translate(-mWidth, 0);
 		sl_ctx.drawImage(stacheRight, 0, 0);
-		ctx.drawImage(stacheLeft, padding, padding);		
+		ctx.drawImage(stacheLeft, padding, padding);
 
 		var div = '#'+el;
 		$(div).append(canvas);
