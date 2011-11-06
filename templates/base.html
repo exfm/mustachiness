@@ -100,8 +100,24 @@
           <h1>Mustachiness</h1>
         </div>
         <div class="row">
-          <div class="span14">
+          <div class="span10">
             {% block body %}
+            {% endblock %}
+          </div>
+          <div class="span4 sidebar">
+            {% block sidebar %}
+                <h4>Mustaches through the ages</h4>
+                <ul class="unstyled">
+                    <li><a href="/years/1930/1939">1930-1939</a></li>
+                    <li><a href="/years/1940/1949">1940-1949</a></li>
+                    <li><a href="/years/1950/1959">1950-1959</a></li>
+                    <li><a href="/years/1960/1969">1960-1969</a></li>
+                    <li><a href="/years/1970/1979">1970-1979</a></li>
+                    <li><a href="/years/1980/1989">1980-1989</a></li>
+                    <li><a href="/years/1990/1999">1990-1999</a></li>
+                    <li><a href="/years/2000/2009">2000-2009</a></li>
+                    <li><a href="/years/2010/present">2010-present</a></li>
+                </ul>
             {% endblock %}
           </div>
         </div>
