@@ -66,7 +66,12 @@ $(function(){
 
 
 		for(var i = 0; i < mWidth; i++){
+			console.log(timestamps[i], i);
+			try{
 			var h = Math.abs(timestamps[i][1]) + fatness;
+			} catch(e){
+				var h = Math.abs(timestamps[i]) + fatness;
+			}
 
 			if(i > taperStart){
 				var percentLeft = (taperLength - (i - taperStart))/taperLength;
