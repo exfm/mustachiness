@@ -245,6 +245,11 @@ def get_artist(name):
 
 
 def get_artist_song_ids(name):
+    r = get_redis()
+    key = "cache:artist_song_ids:%s" % (name)
+    if r.exists(key):
+        return json.loads(r.get(key))
+
     params = [
         ('api_key', 'IILIWPF9XK31O9BLS'),
         ('name', name)
@@ -257,6 +262,7 @@ def get_artist_song_ids(name):
     fp.close()
     data = json.loads(data)
     song_ids = [song['id'] for song in data['response']['songs']]
+    r.set(key, json.dumps(song_ids))
     return song_ids
 
 
