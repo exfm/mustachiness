@@ -17,6 +17,9 @@ exfm = ExfmClient()
 
 _redis = None
 
+class NoArtist(Exception):
+    pass
+
 
 def get_redis():
     global _redis
@@ -139,11 +142,35 @@ def buy(song_id, what):
 
 @app.route('/make')
 def make():
-    song = get_song()
-    if not isinstance(song, dict):
-        return song
+    try:
+        song = get_song()
+        if not isinstance(song, dict):
+            return song
+        return render_template("make.html", song=song)
+    except NoArtist, e:
+        return redirect('/no-artist?q=%s' % e.message)
 
-    return render_template("make.html", song=song)
+
+def suggest(q):
+    params = [
+        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('name', q)
+    ]
+
+    _ = "http://developer.echonest.com/api/v4/artist/suggest?%s" % (urllib.urlencode(params))
+    print _
+    fp = urllib2.urlopen(_)
+    data = fp.read()
+    fp.close()
+    data = json.loads(data)
+    return data['response']['artists']
+
+
+@app.route('/no-artist')
+def no_artist():
+    q = request.values.get('q')
+    suggestions = suggest(q)
+    return render_template('no-artist.html', q=q, suggestions=suggestions)
 
 
 @app.route('/latest')
@@ -313,12 +340,15 @@ def extract(q):
         ('api_key', 'N6E4NIOVYMTHNDM8J'),
         ('text', q)
     ]
-    fp = urllib2.urlopen("http://developer.echonest.com/api/v4/artist/extract?%s" % urllib.urlencode(params))
-    data = fp.read()
-    fp.close()
-    resp = json.loads(data)
-    artist = resp['response']['artists'][0]['name'].lower()
-    title = q.lower().replace(artist.lower(), '')
+    try:
+        fp = urllib2.urlopen("http://developer.echonest.com/api/v4/artist/extract?%s" % urllib.urlencode(params))
+        data = fp.read()
+        fp.close()
+        resp = json.loads(data)
+        artist = resp['response']['artists'][0]['name'].lower()
+        title = q.lower().replace(artist.lower(), '')
+    except IndexError:
+        raise NoArtist(q)
 
     artist = artist.strip()
     title = title.strip()
