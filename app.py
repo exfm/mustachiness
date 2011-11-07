@@ -110,6 +110,16 @@ def _context_processor():
     return {'num_staches': num_staches}
 
 
+@app.errorhandler(404)
+def not_found_error(e):
+    return render_template('error.html', code=404, message="Couldn't find the stache you're looking for."), 404
+
+
+@app.errorhandler(500)
+def error_500(e):
+    return render_template('error.html', code=500, message="Too much stache action!  Please try refreshing the page."), 500
+
+
 @app.route('/')
 def index():
     return render_template("index.html", songs=get_latest(0, 5))
