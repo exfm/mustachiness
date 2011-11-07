@@ -59,7 +59,7 @@ def get_similar_song_ids(song_id):
     key = 'cache:similar:%s' % (song_id)
     if not r.exists(key):
         params = [
-            ('api_key', 'N6E4NIOVYMTHNDM8J'),
+            ('api_key', 'IILIWPF9XK31O9BLS'),
             ('song_id', song_id)
         ]
         _ = "http://developer.echonest.com/api/v4/playlist/basic?%s" % urllib.urlencode(params)
@@ -163,7 +163,7 @@ def make():
 
 def suggest(q):
     params = [
-        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('api_key', 'IILIWPF9XK31O9BLS'),
         ('name', q)
     ]
 
@@ -246,7 +246,7 @@ def get_artist(name):
 
 def get_artist_song_ids(name):
     params = [
-        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('api_key', 'IILIWPF9XK31O9BLS'),
         ('name', name)
     ]
 
@@ -269,7 +269,7 @@ def get_genre(genre):
 
 def get_songs_in_genre(genre):
     params = [
-        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('api_key', 'IILIWPF9XK31O9BLS'),
         ('bucket', 'audio_summary'),
         ('bucket', 'song_hotttnesss'),
         ('style', genre),
@@ -318,7 +318,7 @@ def get_song_ids_for_years(year_start, year_end):
         return json.loads(r.get(key))
 
     params = [
-        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('api_key', 'IILIWPF9XK31O9BLS'),
         ('bucket', 'songs'),
         ('artist_start_year_before', year_start),
         ('artist_end_year_after', year_end),
@@ -347,7 +347,7 @@ def api_latest():
 
 def extract(q):
     params = [
-        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('api_key', 'IILIWPF9XK31O9BLS'),
         ('text', q)
     ]
     try:
@@ -370,7 +370,7 @@ def extract(q):
 
 def search_en(id=None):
     params = [
-        ('api_key', 'N6E4NIOVYMTHNDM8J'),
+        ('api_key', 'IILIWPF9XK31O9BLS'),
         ('bucket', 'audio_summary'),
         ('bucket', 'song_hotttnesss'),
     ]
