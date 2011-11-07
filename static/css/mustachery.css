@@ -161,3 +161,28 @@ width: 110px;
 	top: 14px;
 	right: 10px;
 }
+
+/* ================================================== 
+// autocomplete
+// ================================================== */
+	.ui-autocomplete.ui-menu {
+	background: #F4F2D7;
+	list-style: none;
+	padding: 1px;
+	margin: 12px 8px;
+	max-width: 680px;
+	-webkit-box-shadow: 0 2px 6px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.3) inset;
+	   -moz-box-shadow: 0 2px 6px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.3) inset;
+	        box-shadow: 0 2px 6px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.3) inset;
+
+}
+
+.ui-autocomplete a {
+	color: #693507;
+	padding: 3px 10px;
+	display: block;
+	font-size: 16px;
+}
+.ui-state-hover {
+	background: white;
+}
