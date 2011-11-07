@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "_helpers.html" import stache %}
+
+{% block body %}
+<h2>Whoops!  Doesnt look like we could find <em>&quot;{{q}}&quot;</em>. Is it one of these?</h2>
+
+<ul>
+    {% for i in suggestions %}
+        <li><a href="/artist/{{i['name']}}">{{i['name']}}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
